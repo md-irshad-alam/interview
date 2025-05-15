@@ -13,30 +13,28 @@
 function Equipment_Rental_Availability(n, adges, availability, start, target) {
   const grp = {};
   for (let i = 1; i <= n; i++) {
-    // console.log(i);
     grp[i] = [];
   }
   for (const [a, b] of adges) {
     grp[a].push(b);
     grp[b].push(a);
   }
-  const que = [[start, 0]];
-  const vistited = new Set();
-  vistited.add(start);
+  const que = [[start, [start]]];
+  const visited = new Set();
+  visited.add(start);
   while (que.length > 0) {
-    const [cur, dist] = que.shift();
+    const [cur, path] = que.shift();
     if (availability[cur] && availability[cur].includes(target)) {
-      //   console.log(dist);
-      return dist;
+      return path;
     }
     for (const ngh of grp[cur]) {
-      if (!vistited.has(ngh)) {
-        vistited.add(ngh);
-        que.push([ngh, dist + 1]);
+      if (!visited.has(ngh)) {
+        visited.add(ngh);
+        que.push([ngh, [...path, ngh]]);
       }
     }
   }
-  return -1;
+  return [];
 }
 
 let n = 5;
@@ -52,10 +50,9 @@ let availability = {
   2: [],
   3: ["bulldozer"],
   4: ["excavator"],
-  5: ["crane"],
 };
 let start_p = 2;
-let target_p = "bulldozer";
+let target_p = "excavator";
 
 console.log(
   Equipment_Rental_Availability(n, edges, availability, start_p, target_p)
